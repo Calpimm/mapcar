@@ -64,7 +64,18 @@ Başarı ölçütü: biri siteyi açınca "şu an ne yapıyor?" diye merak etsin
 
 ### 2. Hareket: araba ve yaya
 
-- **Ulaşım seçimi:** 1 km'den yakın yerlere yürür, gerisine arabayla gider. Kaleiçi (surlar içi) gibi araç girişi zor bölgelerde en yakın park yerine park edip yürür.
+- **Ulaşım seçimi karakterin kararıdır.** Sabit bir mesafe eşiği yoktur. Deniz her yolculuk öncesi seçenekleri (yürümek, arabayla gitmek, taksi) mekan seçimindeki gibi puanlar. Hesaba kattıkları:
+  - **Mesafe ve süre:** yürüyüş ne kadar sürer, arabayla ne kadar (park arama dahil)?
+  - **Hava:** yağmurda ya da 33°C üstü sıcakta yürümek istemez; ılık bir akşamda yürümeyi sever.
+  - **Saat ve ışık:** gece geç saatte ıssız bir yolda uzun yürüyüş istemez.
+  - **Enerji ve ruh hali:** yorgunsa arabayı seçer. Keyfi düşük ve hava güzelse yürüyüş ona iyi gelir; yürümek keyif ve enerjiyi az da olsa etkiler.
+  - **Ne yapacağı:** market alışverişi ya da galeri gibi yük ve araç gerektiren işler arabayla yapılır. Alkol içeceği bir buluşmaya **arabayla gitmez**: yürür ya da taksi tutar. İçtiyse dönüşte de araba kullanmaz; arabası ertesi gün alınmak üzere orada kalır.
+  - **Arabanın durumu:** benzin bitmek üzereyse ya da araba serviste veya başka bir yerde park hâlindeyse buna göre karar verir.
+  - **Park:** Kaleiçi gibi park bulmanın zor olduğu yerlerde yakına park edip yürümeyi ya da baştan yürümeyi düşünür.
+  - **Alışkanlık ve hedefler:** koşu ya da sağlıklı yaşam hobisi edindiyse yürümeye daha yatkındır; topluluk "daha çok yürüsün" derse bu da tercihe girer.
+  - **Para:** taksi pahalıdır, cüzdanı zayıfsa tercih etmez.
+- Seçim ve gerekçesi akışta görünür ("Hava çok güzel, Kaleiçi'ne yürüyerek gitmeye karar verdi", "Bira içeceği için arabayı evde bıraktı, taksiye bindi").
+- **Taksi:** kapıdan kapıya araba rotası, ücret mesafeye göre; haritada Deniz sarı bir taksi simgesinde görünür.
 - **Park yerleri:** OSM'den `amenity=parking` noktaları çekilir. Bir mekanın park yeri, ona yakın olan park noktasıdır.
 - **Yaya rotaları:** FOSSGIS routing (`routing.openstreetmap.de`) foot profili kullanılır; araba için de aynı sunucunun car profili veya OSRM demo kullanılır. Sonuçlar mevcut `Route` tablosunda `mode` alanıyla önbelleklenir.
 - **Gezinti etkinlikleri:** Belirli bir mekana gitmek yerine bir rota boyunca yürümek: "Kaleiçi turu", "sahil yürüyüşü", "Salamis antik kent gezisi". Birkaç ara noktadan geçen yürüyüş rotalarıdır, ara noktalarda kısa duraklar yapılır ("Othello Kalesi'nin önünde fotoğraf çekti").
@@ -270,7 +281,8 @@ Kullanıcı kararı gereği Deniz gerçek mekanlara tam puan verir, olumsuz yoru
 ## Benim verdiğim kararlar (kullanıcı kontrol etsin)
 
 - Saat dilimi `Asia/Famagusta` (KKTC'nin resmi dilimi).
-- 1 km altı yürüme eşiği, 48 saat kesinti telafisi tavanı.
+- 48 saat kesinti telafisi tavanı.
+- Ulaşım seçimine taksi seçeneği eklendi (içkili buluşmalar ve arabasız anlar için).
 - Ziyaretçi kimliği hesapsız, imzalı çerezle.
 - Öneriler serbest metin değil yapılandırılmış (trol riskini azaltır, motorun yapabileceği şeylerle sınırlar).
 - Arkadaş önerileri admin onayından geçer, mesajlar ise filtreden sonra hemen yayınlanır (admin sonradan gizleyebilir).
