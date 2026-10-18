@@ -464,31 +464,51 @@ export class SimRunner {
     reason?: string
   }) {
     const s = structuredClone(this.state)
+    const effects: Effect[] = []
+    const note = (message: string, placeId: string | null = null) =>
+      effects.push({
+        kind: 'event',
+        type: 'incident',
+        message,
+        placeId,
+        at: s.clock,
+        position: [...s.position] as [number, number],
+      })
+
     if (input.money) {
       s.money += input.money
-      this.enqueue(
-        [
-          {
-            kind: 'transaction',
-            amount: input.money,
-            category: 'GIFT',
-            description: input.reason ?? 'Yönetici müdahalesi',
-            placeId: null,
-            balance: s.money,
-            at: s.clock,
-          },
-        ],
-        [],
+      const reason =
+        input.reason ?? (input.money > 0 ? 'Gökten para yağdı' : 'Beklenmedik bir masraf çıktı')
+      effects.push({
+        kind: 'transaction',
+        amount: input.money,
+        category: 'GIFT',
+        description: reason,
+        placeId: null,
+        balance: s.money,
+        at: s.clock,
+      })
+      note(
+        `${reason}: ${input.money > 0 ? '+' : '−'}${Math.abs(input.money).toLocaleString('tr-TR')} ₺`,
       )
     }
-    if (input.needs) Object.assign(s.needs, input.needs)
+    if (input.needs) {
+      Object.assign(s.needs, input.needs)
+      note('Garip bir his... bir anda bambaşka hissetti.')
+    }
     if (input.teleportPlaceId) {
       const p = indexWorld(this.world).places.get(input.teleportPlaceId)
       if (!p) throw new Error('Yer bulunamadı')
       s.position = [p.lng, p.lat]
       s.activity = { kind: 'idle', placeId: p.id }
+      note('Göz açıp kapayıncaya kadar kendini burada buldu.', p.id)
+      this.currentRouteKey = null
+      this.broadcastRoute()
     }
     this.state = s
+    const feed = effects.flatMap((e) => (e.kind === 'event' ? [this.toFeed(e)] : []))
+    this.enqueue(effects, feed)
+    for (const f of feed) this.broadcast({ type: 'event', data: f })
     await this.save()
     this.broadcast({ type: 'snapshot', data: this.snapshot() })
   }
