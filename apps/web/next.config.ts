@@ -7,6 +7,8 @@ loadEnvConfig(path.resolve(import.meta.dirname, '../..'))
 
 const config: NextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
+  outputFileTracingRoot: path.resolve(import.meta.dirname, '../..'),
   devIndicators: { position: 'bottom-left' },
   transpilePackages: ['@mapcar/contracts', '@mapcar/sim'],
   experimental: { optimizePackageImports: ['lucide-react', 'recharts'] },

@@ -18,7 +18,7 @@
     "db:migrate": "pnpm --filter @mapcar/db migrate",
     "db:seed": "pnpm --filter @mapcar/db seed",
     "db:studio": "pnpm --filter @mapcar/db studio",
-    "setup": "pnpm db:up && pnpm --filter @mapcar/db generate && pnpm db:migrate && pnpm db:seed"
+    "db:setup": "pnpm db:up && pnpm --filter @mapcar/db generate && pnpm db:migrate && pnpm db:seed"
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",

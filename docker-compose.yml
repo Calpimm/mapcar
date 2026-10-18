@@ -1,8 +1,9 @@
+# Geliştirme:   docker compose up -d postgres
+# Tam yığın:    docker compose --profile full up -d --build
 services:
   postgres:
     image: postgres:17-alpine
     restart: unless-stopped
-    network_mode: bridge
     environment:
       POSTGRES_USER: mapcar
       POSTGRES_PASSWORD: mapcar
@@ -16,6 +17,51 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  api:
+    profiles: [full]
+    build: { context: ., target: api }
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql://mapcar:mapcar@postgres:5432/mapcar
+      API_CORS_ORIGINS: ${API_CORS_ORIGINS:-http://localhost:3010,http://localhost:3011}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:?ADMIN_API_TOKEN gerekli}
+      OSRM_URL: ${OSRM_URL:-https://router.project-osrm.org}
+    ports:
+      - "4000:4000"
+
+  web:
+    profiles: [full]
+    build:
+      context: .
+      target: web
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+    restart: unless-stopped
+    depends_on: [api]
+    ports:
+      - "3010:3010"
+
+  admin:
+    profiles: [full]
+    build:
+      context: .
+      target: admin
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+    restart: unless-stopped
+    depends_on: [api]
+    environment:
+      API_INTERNAL_URL: http://api:4000
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000}
+      ADMIN_API_TOKEN: ${ADMIN_API_TOKEN:?ADMIN_API_TOKEN gerekli}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?ADMIN_PASSWORD gerekli}
+      ADMIN_SESSION_SECRET: ${ADMIN_SESSION_SECRET:?ADMIN_SESSION_SECRET gerekli}
+      SITE_URL: ${SITE_URL:-http://localhost:3010}
+    ports:
+      - "3011:3011"
 
 volumes:
   mapcar-pg:

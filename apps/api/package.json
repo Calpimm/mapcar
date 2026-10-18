@@ -18,6 +18,8 @@
     "@mapcar/contracts": "workspace:*",
     "@mapcar/db": "workspace:*",
     "@mapcar/sim": "workspace:*",
+    "@prisma/adapter-pg": "7.10.1",
+    "@prisma/client": "7.10.1",
     "@scalar/fastify-api-reference": "1.75.0",
     "fastify": "5.12.7",
     "fastify-plugin": "^5.0.1",

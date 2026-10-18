@@ -1,0 +1,11 @@
+**/node_modules
+**/.next
+**/dist
+**/.turbo
+**/generated
+**/public/maplibre
+.env
+.env.*
+!.env.example
+.git
+docs/screenshots

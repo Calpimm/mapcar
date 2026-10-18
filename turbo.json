@@ -4,20 +4,22 @@
   "globalEnv": ["NODE_ENV"],
   "tasks": {
     "generate": {
-      "cache": false
+      "cache": false,
+      "passThroughEnv": ["DATABASE_URL"]
     },
     "build": {
-      "dependsOn": ["^build", "generate"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "dependsOn": ["^build", "^generate"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "env": ["NEXT_PUBLIC_API_URL"]
     },
     "typecheck": {
-      "dependsOn": ["^build", "generate"]
+      "dependsOn": ["^generate"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^generate"]
     },
     "dev": {
-      "dependsOn": ["^build", "generate"],
+      "dependsOn": ["^generate"],
       "cache": false,
       "persistent": true
     }
