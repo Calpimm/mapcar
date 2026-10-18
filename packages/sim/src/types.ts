@@ -228,6 +228,8 @@ export interface AgentState {
     reviews: number
   }
   lastThoughtAt: number
+  /** Son tamamlanan etkinlik (eski kayıtlarda yok) */
+  lastAction?: ActionKind
   seq: number
 }
 

@@ -79,6 +79,22 @@ describe('simülasyon motoru', () => {
     expect(s.goals.find((g) => g.kind === 'buy_car' && g.status === 'done')).toBeDefined()
   })
 
+  it('hafta sonunu evde oturarak geçirmez', () => {
+    const { effects } = run(7, 11)
+    const weekendDaytime = effects.filter(
+      (e) =>
+        e.kind === 'event' &&
+        e.type === 'activity_start' &&
+        e.at >= 5 * MIN_PER_DAY + 9 * 60 &&
+        e.at < 7 * MIN_PER_DAY &&
+        e.at % MIN_PER_DAY < 20 * 60,
+    )
+    const outings = weekendDaytime.filter(
+      (e) => e.kind === 'event' && !['relax', 'sleep', 'eat_home'].includes(String(e.data?.action)),
+    )
+    expect(outings.length).toBeGreaterThanOrEqual(4)
+  })
+
   it('girdi durumunu değiştirmez', () => {
     const world = makeWorld()
     const s = createInitialState(world, {

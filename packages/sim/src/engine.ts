@@ -529,9 +529,12 @@ class Simulation {
         add('socialize', out.place, 0.3 + ((100 - n.social) / 100) * 1.5 + 0.1 * (out.value - 3))
     }
 
-    // Eğlence
-    if (n.fun < 60 && !night) {
-      const urgency = 0.3 + ((100 - n.fun) / 100) * 1.4 + (isWeekend(s.clock) ? 0.3 : 0)
+    // Eğlence: keyif düşükse acil, değilse boş vakitte (özellikle hafta sonu) yine de bir seçenek
+    if (!night && (n.fun < 60 || isWeekend(s.clock) || h >= 17)) {
+      const urgency =
+        n.fun < 60
+          ? 0.3 + ((100 - n.fun) / 100) * 1.4 + (isWeekend(s.clock) ? 0.3 : 0)
+          : 0.35 + (isWeekend(s.clock) ? 0.2 : 0)
       const spot = this.bestPlace(this.placesOf(['LANDMARK', 'PARK']), 'explore')
       if (spot && h >= 8 && h < 20) add('explore', spot.place, urgency + 0.1 * (spot.value - 3))
       const beach = this.bestPlace(this.placesOf(['BEACH']), 'beach')
@@ -908,7 +911,9 @@ class Simulation {
       dish,
     }
     this.markPlan(action, place.id)
-    this.emit('activity_start', message, place.id, { action, cost, dish })
+    // Peş peşe dinlenmeler akışı doldurmasın
+    if (!(action === 'relax' && s.lastAction === 'relax'))
+      this.emit('activity_start', message, place.id, { action, cost, dish })
   }
 
   private finish(a: Extract<Activity, { kind: 'at' }>) {
@@ -947,6 +952,7 @@ class Simulation {
     }
     if (REVIEWABLE.includes(a.action)) this.review(a, place)
     this.updateGoals()
+    s.lastAction = a.action
     s.activity = { kind: 'idle', placeId: place.id }
   }
 
@@ -1200,7 +1206,7 @@ class Simulation {
         const trip = this.pickTrip()
         if (trip) item(9.5, 'trip', `Kaçamak: ${trip.name}, ${trip.city}`, trip.id)
       } else item(11, 'explore', 'Mağusa turu')
-      item(15, 'beach', 'Deniz keyfi')
+      item(15, 'beach', 'Plaj keyfi')
       item(20, 'socialize', 'Arkadaşlarla buluş')
     }
     const model = this.carModel
