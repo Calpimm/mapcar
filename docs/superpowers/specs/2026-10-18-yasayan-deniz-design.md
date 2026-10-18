@@ -59,7 +59,7 @@ Başarı ölçütü: biri siteyi açınca "şu an ne yapıyor?" diye merak etsin
 - `clock` artık gerçek yerel saatten türetilir: `Asia/Famagusta` saat dilimindeki "duvar saati" dakikası. Gün sınırları, hafta günleri ve yaz saati bu dilime göre hesaplanır.
 - Runner her adımda gerçek geçen süre kadar ilerletir. Uyarlamalı hız (yolda yavaş, etkinlikte hızlı) kalkar.
 - **Kesinti telafisi.** API bir süre kapalı kaldıysa açılışta aradaki süre hızlı simüle edilir (yayın yapmadan), en fazla 48 saat. Daha uzun kesintide Deniz "uzun bir uyku" olayıyla eve alınır ve oradan devam eder.
-- Admin panelindeki hız ayarı tek bir **çarpana** dönüşür (varsayılan 1). Sadece test ve demo içindir. Çarpan 1 değilse sitede "hızlandırılmış" etiketi görünür ve saat gerçek saatten kopar.
+- Canlı karakterde hız ayarı yoktur; hızlandırma yalnızca geliştirme ortamı içindir (bkz. "Benim verdiğim kararlar").
 - Ekonomi gerçek zamana göre yeniden ölçeklenir: maaş aylık yatar, kira aylık, faturalar aylık, market haftalık.
 
 ### 2. Hareket: araba ve yaya
