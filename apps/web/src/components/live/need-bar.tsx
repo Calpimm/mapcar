@@ -20,14 +20,7 @@ export function NeedBar({
         </span>
         <span className={cn('tabular font-medium', low && 'text-kiraz')}>{Math.round(value)}</span>
       </div>
-      <div
-        className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted"
-        role="meter"
-        aria-label={label}
-        aria-valuenow={Math.round(value)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
+      <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted" aria-hidden>
         <div
           className={cn(
             'h-full rounded-full transition-[width] duration-700 ease-out',

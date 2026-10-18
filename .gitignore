@@ -11,4 +11,4 @@ coverage
 .DS_Store
 **/generated
 next-env.d.ts
-public/maplibre
+**/public/maplibre

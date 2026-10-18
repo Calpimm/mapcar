@@ -21,7 +21,7 @@ export function SimClock() {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-        <div className="flex items-center gap-3 text-right" tabIndex={0}>
+        <button type="button" className="flex items-center gap-3 rounded-md text-right">
           <div className="hidden leading-tight sm:block">
             <p className="text-xs text-muted-foreground">{snap ? `${snap.day + 1}. gün` : ''}</p>
             <p className="text-xs capitalize">{snap ? formatSimDay(snap.date) : ''}</p>
@@ -40,9 +40,10 @@ export function SimClock() {
                     ? 'animate-pulse bg-tas'
                     : 'bg-kiraz',
             )}
-            aria-label={statusText}
+            aria-hidden
           />
-        </div>
+          <span className="sr-only">{statusText}</span>
+        </button>
       </TooltipTrigger>
       <TooltipContent side="bottom">
         {statusText}
