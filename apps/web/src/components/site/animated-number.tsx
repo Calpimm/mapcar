@@ -26,7 +26,10 @@ export function AnimatedNumber({
   }, [value, mv, reduce, format])
 
   useEffect(
-    () => mv.on('change', (v) => ref.current && (ref.current.textContent = format(v))),
+    () =>
+      mv.on('change', (v) => {
+        if (ref.current) ref.current.textContent = format(v)
+      }),
     [mv, format],
   )
 
