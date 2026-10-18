@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* biome-ignore lint/security/noDangerouslySetInnerHtml: sabit tema betiği */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="min-h-dvh font-sans">
+      <body className="min-h-dvh pb-16 font-sans sm:pb-0">
         <Providers>
           <SiteHeader />
           {children}

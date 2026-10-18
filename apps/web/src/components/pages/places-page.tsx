@@ -63,7 +63,7 @@ export function PlacesPage() {
       }
     >
       <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
-        <div>
+        <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-3">
             <ToggleGroup
               type="single"
@@ -72,6 +72,7 @@ export function PlacesPage() {
               variant="outline"
               size="sm"
               aria-label="Kategori"
+              className="max-w-full overflow-x-auto [scrollbar-width:none]"
             >
               {GROUPS.map((g) => (
                 <ToggleGroupItem key={g.value} value={g.value} className="px-3">
@@ -143,7 +144,7 @@ export function PlacesPage() {
                         <span className="font-display text-lg font-semibold tabular">
                           {p.rating.toFixed(1)}
                         </span>
-                        <Stars value={p.rating} size={13} />
+                        <Stars value={p.rating} size={13} className="hidden sm:inline-flex" />
                       </span>
                     ) : (
                       <span className="text-sm text-muted-foreground">Henüz puan yok</span>
