@@ -7,7 +7,7 @@ const schema = z.object({
   API_HOST: z.string().default('0.0.0.0'),
   API_CORS_ORIGINS: z
     .string()
-    .default('http://localhost:3000,http://localhost:3001')
+    .default('http://localhost:3010,http://localhost:3011')
     .transform((s) =>
       s
         .split(',')
