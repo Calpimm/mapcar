@@ -1,0 +1,270 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "esm"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/// Haritadaki her nokta: ev, iş yeri, restoran, plaj, tarihi yer...
+model Place {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  category    PlaceCategory
+  description String        @default("")
+  city        String        @default("Gazimağusa")
+  lat         Float
+  lng         Float
+  /// 1 (ucuz) - 4 (pahalı)
+  priceLevel  Int           @default(2)
+  /// Gizli kalite puanı (0-1). Simülasyondaki karakter bunu bilmez, deneyimleyerek öğrenir.
+  quality     Float         @default(0.6)
+  /// Açılış / kapanış saati (0-24). closeHour < openHour ise gece yarısını geçer.
+  openHour    Int           @default(8)
+  closeHour   Int           @default(23)
+  active      Boolean       @default(true)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  reviews      Review[]
+  jobs         Job[]
+  events       Event[]
+  routesFrom   Route[]       @relation("RouteFrom")
+  routesTo     Route[]       @relation("RouteTo")
+  transactions Transaction[]
+
+  @@index([category])
+}
+
+enum PlaceCategory {
+  HOME
+  WORK
+  RESTAURANT
+  CAFE
+  FAST_FOOD
+  BAR
+  BEACH
+  LANDMARK
+  PARK
+  MARKET
+  MALL
+  GAS_STATION
+  CAR_DEALER
+  MECHANIC
+  GYM
+}
+
+/// Galeride satılan araba modelleri.
+model CarModel {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  brand        String
+  model        String
+  year         Int
+  price        Int
+  /// 100 km'de litre
+  fuelPer100Km Float
+  tankLiters   Float
+  /// 0-1, sürüş keyfi
+  comfort      Float    @default(0.5)
+  /// km/s seyir hızı
+  cruiseKmh    Int      @default(60)
+  color        String   @default("#e4572e")
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ownedCars OwnedCar[]
+}
+
+/// Kariyer basamakları.
+model Job {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  placeId    String
+  place      Place    @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  /// Saatlik ücret (TL)
+  hourlyWage Int
+  shiftStart Int
+  shiftEnd   Int
+  /// 0=Pazar ... 6=Cumartesi
+  workDays   Int[]
+  /// Bu işi alabilmek için gereken kariyer seviyesi
+  minLevel   Int      @default(0)
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  agents Agent[]
+}
+
+/// Simüle edilen karakter. Canlı durum `state` içinde motor tarafından tutulur.
+model Agent {
+  id        String   @id @default(cuid())
+  name      String
+  bio       String   @default("")
+  jobId     String?
+  job       Job?     @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  /// Motorun tam durumu (ihtiyaçlar, konum, aktivite, plan...). @mapcar/sim AgentState şeması.
+  state     Json
+  simTime   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  events       Event[]
+  reviews      Review[]
+  transactions Transaction[]
+  cars         OwnedCar[]
+  goals        Goal[]
+  snapshots    DailySnapshot[]
+}
+
+model OwnedCar {
+  id            String    @id @default(cuid())
+  agentId       String
+  agent         Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  carModelId    String
+  carModel      CarModel  @relation(fields: [carModelId], references: [id])
+  purchasePrice Int
+  salePrice     Int?
+  odometerKm    Float     @default(0)
+  purchasedAt   DateTime
+  soldAt        DateTime?
+
+  @@index([agentId])
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  agentId   String
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  placeId   String
+  place     Place    @relation(fields: [placeId], references: [id], onDelete: Cascade)
+  /// 1-5
+  rating    Int
+  comment   String
+  spent     Int      @default(0)
+  simTime   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([placeId, simTime])
+  @@index([agentId, simTime])
+}
+
+model Transaction {
+  id          String     @id @default(cuid())
+  agentId     String
+  agent       Agent      @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  placeId     String?
+  place       Place?     @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  /// Pozitif gelir, negatif gider (TL)
+  amount      Int
+  category    TxCategory
+  description String
+  balance     Int
+  simTime     DateTime
+  createdAt   DateTime   @default(now())
+
+  @@index([agentId, simTime])
+}
+
+enum TxCategory {
+  SALARY
+  BONUS
+  FOOD
+  GROCERY
+  FUEL
+  LEISURE
+  CAR_PURCHASE
+  CAR_SALE
+  REPAIR
+  RENT
+  GIFT
+}
+
+/// Günlük akışı: karakterin yaptığı her şey.
+model Event {
+  id        String   @id @default(cuid())
+  agentId   String
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  placeId   String?
+  place     Place?   @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  type      String
+  message   String
+  data      Json?
+  lat       Float?
+  lng       Float?
+  simTime   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([agentId, simTime])
+  @@index([type])
+}
+
+model Goal {
+  id           String     @id @default(cuid())
+  agentId      String
+  agent        Agent      @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  kind         String
+  title        String
+  targetAmount Int?
+  status       GoalStatus @default(ACTIVE)
+  createdAt    DateTime
+  completedAt  DateTime?
+
+  @@index([agentId, status])
+}
+
+enum GoalStatus {
+  ACTIVE
+  DONE
+  ABANDONED
+}
+
+/// Gün sonu özeti: grafikler için.
+model DailySnapshot {
+  id         String   @id @default(cuid())
+  agentId    String
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  day        Int
+  date       DateTime
+  money      Int
+  earned     Int
+  spent      Int
+  distanceKm Float
+  mood       Float
+
+  @@unique([agentId, day])
+}
+
+/// İki yer arasındaki gerçek yol rotası (OSRM'den alınıp önbelleklenir).
+model Route {
+  id          String   @id @default(cuid())
+  fromPlaceId String
+  from        Place    @relation("RouteFrom", fields: [fromPlaceId], references: [id], onDelete: Cascade)
+  toPlaceId   String
+  to          Place    @relation("RouteTo", fields: [toPlaceId], references: [id], onDelete: Cascade)
+  /// [lng, lat][]
+  geometry    Json
+  distanceM   Float
+  durationS   Float
+  source      String   @default("osrm")
+  createdAt   DateTime @default(now())
+
+  @@unique([fromPlaceId, toPlaceId])
+}
+
+/// Tekil simülasyon ayarları.
+model SimSettings {
+  id           Int      @id @default(1)
+  paused       Boolean  @default(false)
+  /// Araba yoldayken 1 gerçek saniyede geçen simülasyon dakikası
+  driveRate    Float    @default(0.35)
+  /// Etkinlik sırasında 1 gerçek saniyede geçen simülasyon dakikası
+  activityRate Float    @default(8)
+  updatedAt    DateTime @updatedAt
+}
