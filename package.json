@@ -1,0 +1,28 @@
+{
+  "name": "mapcar",
+  "private": true,
+  "description": "Gazimağusa'da kendi hayatını yaşayan bir sürücünün canlı simülasyonu.",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "db:up": "docker compose up -d postgres",
+    "db:down": "docker compose down",
+    "db:migrate": "pnpm --filter @mapcar/db migrate",
+    "db:seed": "pnpm --filter @mapcar/db seed",
+    "db:studio": "pnpm --filter @mapcar/db studio",
+    "setup": "pnpm db:up && pnpm --filter @mapcar/db generate && pnpm db:migrate && pnpm db:seed"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15",
+    "turbo": "2.11.9",
+    "typescript": "6.0.3"
+  }
+}
