@@ -757,10 +757,11 @@ class Simulation {
       case 'sleep': {
         const needed = (100 - s.needs.energy) / 0.2 + 30
         let wake = s.clock + clamp(needed, 150, 600)
-        const night = h >= 21 || h < 5
+        // Akşam yattıysa gece yarısı uyanıp tekrar yatmasın: en erken 06:30
+        const night = h >= 19 || h < 5
         if (night)
-          wake = Math.max(wake, atHourToday(h >= 21 ? s.clock + MIN_PER_DAY : s.clock, 6.5))
-        wake = Math.min(wake, s.clock + 600)
+          wake = Math.max(wake, atHourToday(h >= 19 ? s.clock + MIN_PER_DAY : s.clock, 6.5))
+        wake = Math.min(wake, s.clock + 660)
         const job = this.job
         if (job) {
           const tomorrow = h > 12 ? s.clock + MIN_PER_DAY : s.clock
